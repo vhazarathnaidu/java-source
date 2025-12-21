@@ -99,10 +99,10 @@ pipeline {
                         script {
                             if (isUnix()) {
                                 echo "Running Python script on Linux..."
-                                sh "python Hello.py"
+                                sh "python3 Hello.py"
                             } else {
                                 echo "Running Python script on Windows..."
-                                bat "python Hello.py"
+                                bat "python3 Hello.py"
                             }
                         }
                     }
