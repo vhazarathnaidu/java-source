@@ -19,6 +19,7 @@ pipeline {
 
             stages {
                 stage('Checkout Java Repo') {
+                  agent { label 'java' }
                     steps {
 					 cleanWs()
                          echo "Checkout to Java repo..."
@@ -54,6 +55,7 @@ pipeline {
                 }
 
                 stage('deploy Java') {
+                  agent { label 'java' }
                     steps {
 					dir("java"){
                         script {
@@ -76,7 +78,7 @@ pipeline {
         }
 
         stage('python') {
-
+         agent { label 'python' }
             stages {
                 stage('Checkout Python Repo') {
                     steps {
@@ -112,8 +114,7 @@ pipeline {
         }
 
         stage('nodejs') {
-           
-
+           agent { label 'nodejs' }
             stages {
                 stage('Checkout Nodejs Repo') {
                     steps {
