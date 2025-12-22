@@ -41,7 +41,7 @@ pipeline {
                             if (isUnix()) {
                                 echo "Compiling Java program on Linux..."
                                 sh """
-								javac Hello.java Main.java
+								javac *.java
 								"""
                             } else {
                                 echo "Compiling Java program on Windows..."
