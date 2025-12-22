@@ -4,148 +4,109 @@ pipeline {
     triggers {
         githubPush()
         pollSCM('H/5 * * * *')
-        
     }
 
     environment {
         USER_NAME = "vhazarathnaidu"
-		current_branch= "${env.GIT_BRANCH}"
-        BRANCH_NAME= "${env.GIT_BRANCH}".replace('origin/', '')
+        BRANCH_NAME = "${env.GIT_BRANCH}".replace('origin/', '')
     }
 
     stages {
-        stage('Java Build') {
-        
+        stage('Checkout Java Repo') {
+            agent { label 'java' }
+            steps {
+                cleanWs() // clean only at the start
+                echo "Checking out Java repo..."
+                git(
+                    url: "https://github.com/vhazarathnaidu/java-source.git",
+                    branch: "${env.BRANCH_NAME}"
+                )
+            }
+        }
 
-            stages {
-                stage('Checkout Java Repo') {
-                  agent { label 'java' }
-                    steps {
-					 cleanWs()
-                         echo "Checkout to Java repo..."
-						 echo "Current branch name: ${env.BRANCH_NAME}"
-				         echo "Current branch name: ${env.GIT_BRANCH}" 
-				         echo "username: ${env.USER_NAME}"
-                       
-                        git(
-                            url: "https://github.com/vhazarathnaidu/java-source.git",
-                            branch: "${env.BRANCH_NAME}"
-                        )
-                    }
-                }
-
-                stage('Build Java') {
-                    steps {
-					dir("java"){
-                        script {
-                            if (isUnix()) {
-                                echo "Compiling Java program on Linux..."
-                                sh """
-								javac *.java
-								"""
-                            } else {
-                                echo "Compiling Java program on Windows..."
-                                bat "javac Hello.java"
-								bat "javac Main.java"
-                            }
+       
+        stage('Build Java') {
+            agent { label 'java' }
+            steps {
+                dir('java') {
+                    script {
+                        if (isUnix()) {
+                            echo "Compiling Java files..."
+                            sh 'javac *.java'
+                        } else {
+                            echo "Compiling Java files on Windows..."
+                            bat 'javac *.java'
                         }
                     }
-					}
-                }
-
-                stage('deploy Java') {
-                  agent { label 'java' }
-                    steps {
-					dir("java"){
-                        script {
-                            if (isUnix()) {
-                                echo "Running Java program on Linux..."
-                                sh """
-                                java Main
-                                java Hello
-                                """
-                            } else {
-                                echo "Running Java program on Windows..."
-                                bat "java Main"
-                                bat "java Hello"
-                            }
-                        }
-                    }
-					}
                 }
             }
         }
 
-        stage('python') {
-         agent { label 'python' }
-            stages {
-                stage('Checkout Python Repo') {
-                    steps {
-					 cleanWs()
-                        echo "Checkout to Python repo..."
-						echo "Current branch name: ${env.BRANCH_NAME}"
-				        echo "Current branch name: ${env.GIT_BRANCH}" 
-				        echo "username: ${env.USER_NAME}"
-                     
-                        git(
-                            url: "https://github.com/vhazarathnaidu/python-source.git",
-                            branch: "${env.BRANCH_NAME}"
-                        )
-                    }
-                }
-
-                stage('Run Python') {
-                    steps {
-					dir("python"){
-                        script {
-                            if (isUnix()) {
-                                echo "Running Python script on Linux..."
-                                sh "python3 Hello.py"
-                            } else {
-                                echo "Running Python script on Windows..."
-                                bat "python3 Hello.py"
-                            }
+        stage('deploy Java') {
+            agent { label 'java' }
+            steps {
+                dir('java') {
+                    script {
+                        if (isUnix()) {
+                            echo "Running Java programs..."
+                            sh 'java Main'
+                            sh 'java Hello'
+                        } else {
+                            echo "Running Java programs on Windows..."
+                            bat 'java Main'
+                            bat 'java Hello'
                         }
                     }
-					}
                 }
             }
         }
 
-        stage('nodejs') {
-           agent { label 'nodejs' }
-            stages {
-                stage('Checkout Nodejs Repo') {
-                    steps {
-					 cleanWs()
-                        echo "Checkout to Nodejs repo..."
-						echo "Current branch name: ${env.BRANCH_NAME}"
-				        echo "Current branch name: ${env.GIT_BRANCH}" 
-				        echo "username: ${env.USER_NAME}"
-                        
-                        git(
-                            url: "https://github.com/vhazarathnaidu/node-source.git",
-                            branch: "${env.BRANCH_NAME}"
-                        )
-                    }
-                }
+        stage('deploy python') {
+            agent { label 'python' }
+            steps {
+                cleanWs()
+                echo "Checking out Python repo..."
+                git(
+                    url: "https://github.com/vhazarathnaidu/python-source.git",
+                    branch: "${env.BRANCH_NAME}"
+                )
 
-                stage('Run Nodejs') {
-                    steps {
-					dir("node"){
-                        script {
-                            if (isUnix()) {
-                                echo "Running Node.js on Linux..."
-                                sh "node Hello.js"
-                            } else {
-                                echo "Running Node.js on Windows..."
-                                bat "node Hello.js"
-                            }
+                dir('python') {
+                    script {
+                        if (isUnix()) {
+                            echo "Running Python script..."
+                            sh 'python3 Hello.py'
+                        } else {
+                            bat 'python Hello.py'
                         }
                     }
-					}
                 }
             }
         }
+
+        stage('deploy nodejs') {
+            agent { label 'nodejs' }
+            steps {
+                cleanWs()
+                echo "Checking out Node.js repo..."
+                git(
+                    url: "https://github.com/vhazarathnaidu/node-source.git",
+                    branch: "${env.BRANCH_NAME}"
+                )
+
+                dir('node') {
+                    script {
+                        if (isUnix()) {
+                            echo "Running Node.js script..."
+                            sh 'node Hello.js'
+                        } else {
+                            bat 'node Hello.js'
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
+
