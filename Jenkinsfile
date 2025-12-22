@@ -15,8 +15,10 @@ pipeline {
         stage('Checkout Java Repo') {
             agent { label 'java' }
             steps {
-                cleanWs() // clean only at the start
+                cleanWs() 
                 echo "Checking out Java repo..."
+                echo current branch= "${env.BRANCH_NAME}"
+                echo username= "${env.USER_NAME}"
                 git(
                     url: "https://github.com/vhazarathnaidu/java-source.git",
                     branch: "${env.BRANCH_NAME}"
@@ -66,6 +68,8 @@ pipeline {
             steps {
                 cleanWs()
                 echo "Checking out Python repo..."
+                echo current branch= "${env.BRANCH_NAME}"
+                echo username= "${env.USER_NAME}"
                 git(
                     url: "https://github.com/vhazarathnaidu/python-source.git",
                     branch: "${env.BRANCH_NAME}"
@@ -89,6 +93,8 @@ pipeline {
             steps {
                 cleanWs()
                 echo "Checking out Node.js repo..."
+                echo current branch= "${env.BRANCH_NAME}"
+                echo username= "${env.USER_NAME}"
                 git(
                     url: "https://github.com/vhazarathnaidu/node-source.git",
                     branch: "${env.BRANCH_NAME}"
