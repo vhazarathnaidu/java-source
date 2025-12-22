@@ -17,8 +17,8 @@ pipeline {
             steps {
                 cleanWs() 
                 echo "Checking out Java repo..."
-                echo current branch= "${env.BRANCH_NAME}"
-                echo username= "${env.USER_NAME}"
+                echo "current branch=  ${env.BRANCH_NAME}"
+                echo "username= ${env.USER_NAME}"
                 git(
                     url: "https://github.com/vhazarathnaidu/java-source.git",
                     branch: "${env.BRANCH_NAME}"
@@ -68,13 +68,12 @@ pipeline {
             steps {
                 cleanWs()
                 echo "Checking out Python repo..."
-                echo current branch= "${env.BRANCH_NAME}"
-                echo username= "${env.USER_NAME}"
+                echo "current branch= ${env.BRANCH_NAME}"
+                echo "username= ${env.USER_NAME}"
                 git(
                     url: "https://github.com/vhazarathnaidu/python-source.git",
                     branch: "${env.BRANCH_NAME}"
-                )
-
+              )
                 dir('python') {
                     script {
                         if (isUnix()) {
@@ -93,8 +92,8 @@ pipeline {
             steps {
                 cleanWs()
                 echo "Checking out Node.js repo..."
-                echo current branch= "${env.BRANCH_NAME}"
-                echo username= "${env.USER_NAME}"
+                echo "current branch= ${env.BRANCH_NAME}"
+                echo "username= ${env.USER_NAME}"
                 git(
                     url: "https://github.com/vhazarathnaidu/node-source.git",
                     branch: "${env.BRANCH_NAME}"
