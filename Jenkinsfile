@@ -3,13 +3,11 @@ pipeline {
 triggers {
         githubPush()
         pollSCM('H/5 * * * *')
-        
     }
 
  environment {
         USER_NAME = "vhazarathnaidu"
-		current_branch= "${env.GIT_BRANCH}"
-        BRANCH_NAME= "${env.GIT_BRANCH}".replace('origin/', '')
+        BRANCH_NAME = "${env.GIT_BRANCH}".replace('origin/', '')
     }
 stages {
     stage('checkout') {
