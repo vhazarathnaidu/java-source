@@ -7,6 +7,7 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.0.0-M3</version>
     <relativePath></relativePath>
+    
   </parent>
 
   <groupId>org.springframework.samples</groupId>
@@ -176,8 +177,9 @@
             </configuration>
           </execution>
         </executions>
-</plugin>
-<plugin>
+      </plugin>
+       <plugins>
+        <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <executions>
@@ -459,3 +461,4 @@
     </profile>
   </profiles>
 </project>
+

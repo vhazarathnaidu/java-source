@@ -70,10 +70,10 @@ pipeline {
             node('java') {
             echo " Build SUCCESS on Java agent for branch: ${env.CLEAN_BRANCH}"
             echo "Archiving build artifacts..."
-            archiveArtifacts artifacts: '**/target/*.jar', 
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
             junit '**/target/surefire-reports/*.xml'
             echo " Artifacts archived successfully"
-            echo "publish the test-reports.."
+            echo "publish the test-reports successfully.."
            
         }
         }
