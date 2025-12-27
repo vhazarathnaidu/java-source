@@ -1,151 +1,65 @@
 pipeline {
-    agent any
-
-    triggers {
+ agent none
+triggers {
         githubPush()
         pollSCM('H/5 * * * *')
         
     }
 
-    environment {
+ environment {
         USER_NAME = "vhazarathnaidu"
 		current_branch= "${env.GIT_BRANCH}"
         BRANCH_NAME= "${env.GIT_BRANCH}".replace('origin/', '')
     }
-
-    stages {
-        stage('Java Build') {
-        
-
-            stages {
-                stage('Checkout Java Repo') {
-                    steps {
-					 cleanWs()
-                         echo "Checkout to Java repo..."
-						 echo "Current branch name: ${env.BRANCH_NAME}"
-				         echo "Current branch name: ${env.GIT_BRANCH}" 
-				         echo "username: ${env.USER_NAME}"
-                       
-                        git(
-                            url: "https://github.com/vhazarathnaidu/java-source.git",
-                            branch: "${env.BRANCH_NAME}"
-                        )
-                    }
-                }
-
-                stage('Build Java') {
-                    steps {
-					dir("java"){
-                        script {
-                            if (isUnix()) {
-                                echo "Compiling Java program on Linux..."
-                                sh """
-								javac Hello.java
-								javac Main.java
-								"""
-                            } else {
-                                echo "Compiling Java program on Windows..."
-                                bat "javac Hello.java"
-								bat "javac Main.java"
-                            }
-                        }
-                    }
-					}
-                }
-
-                stage('deploy Java') {
-                    steps {
-					dir("java"){
-                        script {
-                            if (isUnix()) {
-                                echo "Running Java program on Linux..."
-                                sh """
-                                java Main
-                                java Hello
-                                """
-                            } else {
-                                echo "Running Java program on Windows..."
-                                bat "java Main"
-                                bat "java Hello"
-                            }
-                        }
-                    }
-					}
-                }
-            }
+stages {
+    stage('checkout') {
+          agent { label 'java' }
+		echo "checking out the code from branch: ${BRANCH_NAME}"
+        echo "Current Branch: ${current_branch}"
+        echo "User Name: ${USER_NAME}"
+        steps {
+            git (
+                url: 'https://github.com/vhazarathnaidu/java-source.git',
+                branch: "${BRANCH_NAME}"
+            )
         }
-
-        stage('python') {
-
-            stages {
-                stage('Checkout Python Repo') {
-                    steps {
-					 cleanWs()
-                        echo "Checkout to Python repo..."
-						echo "Current branch name: ${env.BRANCH_NAME}"
-				        echo "Current branch name: ${env.GIT_BRANCH}" 
-				        echo "username: ${env.USER_NAME}"
-                     
-                        git(
-                            url: "https://github.com/vhazarathnaidu/python-source.git",
-                            branch: "${env.BRANCH_NAME}"
-                        )
-                    }
-                }
-
-                stage('Run Python') {
-                    steps {
-					dir("python"){
-                        script {
-                            if (isUnix()) {
-                                echo "Running Python script on Linux..."
-                                sh "python Hello.py"
-                            } else {
-                                echo "Running Python script on Windows..."
-                                bat "python Hello.py"
-                            }
-                        }
-                    }
-					}
-                }
-            }
-        }
-
-        stage('nodejs') {
-           
-
-            stages {
-                stage('Checkout Nodejs Repo') {
-                    steps {
-					 cleanWs()
-                        echo "Checkout to Nodejs repo..."
-						echo "Current branch name: ${env.BRANCH_NAME}"
-				        echo "Current branch name: ${env.GIT_BRANCH}" 
-				        echo "username: ${env.USER_NAME}"
-                        
-                        git(
-                            url: "https://github.com/vhazarathnaidu/node-source.git",
-                            branch: "${env.BRANCH_NAME}"
-                        )
-                    }
-                }
-
-                stage('Run Nodejs') {
-                    steps {
-					dir("node"){
-                        script {
-                            if (isUnix()) {
-                                echo "Running Node.js on Linux..."
-                                sh "node Hello.js"
-                            } else {
-                                echo "Running Node.js on Windows..."
-                                bat "node Hello.js"
-                            }
-                        }
-                    }
-					}
-                }
-            }
+	}
+    stage('Build') {
+        agent { label 'java' }
+        steps {
+            echo 'Building..'
+            sh 'mvn clean package'
         }
     }
+    stage('Test') {
+        agent { label 'java' }
+        steps {
+            echo 'Testing..'
+            sh 'mvn test'
+        }
+    }
+    } 
+post {
+   always {
+    echo " archiving the artifacts"
+    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+    junit '**/target/surefire-reports/*.xml'
+    }
+    success {
+         script {
+                def branchBuild = env.BRANCH_NAME ?: env.GIT_BRANCH
+
+                echo "BUILD SUCCESS DETAILS"
+                echo "Job Name     : ${env.JOB_NAME}"
+                echo "Build ID     : ${env.BUILD_ID}"
+                echo "Build Number : ${env.BUILD_NUMBER}"
+                echo "Build URL    : ${env.BUILD_URL}"
+                echo "Branch Built : ${branchBuilt}"
+            }
+        
+    }
+  }
 }
+
+       
+        
