@@ -12,10 +12,10 @@ triggers {
 stages {
     stage('checkout') {
           agent { label 'java' }
-		echo "checking out the code from branch: ${BRANCH_NAME}"
+        steps {
+          echo "checking out the code from branch: ${BRANCH_NAME}"
         echo "Current Branch: ${current_branch}"
         echo "User Name: ${USER_NAME}"
-        steps {
             git (
                 url: 'https://github.com/vhazarathnaidu/java-source.git',
                 branch: "${BRANCH_NAME}"
