@@ -7,7 +7,6 @@
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.0.0-M3</version>
     <relativePath></relativePath>
-    
   </parent>
 
   <groupId>org.springframework.samples</groupId>
@@ -20,7 +19,7 @@
 
     <!-- Generic properties -->
     <java.version>21</java.version>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Important for reproducible builds. Update using e.g. ./mvnw versions:set -DnewVersion=... -->
@@ -178,19 +177,6 @@
           </execution>
         </executions>
       </plugin>
-       <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>repackage</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
       <plugin>
         <groupId>io.spring.javaformat</groupId>
         <artifactId>spring-javaformat-maven-plugin</artifactId>
@@ -461,4 +447,3 @@
     </profile>
   </profiles>
 </project>
-
